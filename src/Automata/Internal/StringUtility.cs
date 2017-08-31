@@ -8,7 +8,7 @@ namespace Microsoft.Automata
     /// <summary>
     /// Provides some character escaping routines for strings.
     /// </summary>
-    internal static class StringUtility
+    public static class StringUtility
     {
         #region Escaping strings
         ///// <summary>

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Microsoft.Automata
 {
-    internal class GraphAlgorithms
+    public class GraphAlgorithms
     {
         /// <summary>
         /// Computes the strongly connected components of the automaton

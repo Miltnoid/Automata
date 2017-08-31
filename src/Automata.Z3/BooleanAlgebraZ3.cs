@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Automata.Z3.Interfaces;
 using Microsoft.Z3;
 
 namespace Microsoft.Automata.Z3
 {
-    public class Z3BoolAlg : IBooleanAlgebra<BoolExpr>
+    public class Z3BoolAlg : IInterpolatingBooleanAlgebra<BoolExpr>
     {
-        Context context;
+        InterpolationContext context;
         Solver solver;
         Sort elementSort;
         Expr elemVar;
@@ -15,7 +16,7 @@ namespace Microsoft.Automata.Z3
         BoolExpr _False;
         BoolExpr _True;
 
-        public Z3BoolAlg(Context z3context, Sort elementSort, long timeout)
+        public Z3BoolAlg(InterpolationContext z3context, Sort elementSort, long timeout)
         {
             this.context = z3context;
             this.context.UpdateParamValue("MODEL", "true");
@@ -28,7 +29,7 @@ namespace Microsoft.Automata.Z3
             this._True = z3context.MkTrue();
         }
 
-        public Z3BoolAlg(Context z3context, Sort elementSort)
+        public Z3BoolAlg(InterpolationContext z3context, Sort elementSort)
         {
             this.context = z3context;
             this.context.UpdateParamValue("MODEL", "true");
@@ -103,7 +104,7 @@ namespace Microsoft.Automata.Z3
         public BoolExpr MkAnd(params BoolExpr[] predicates)
         {
             var res = True;
-            for (int i = 0; i < predicates.Length; i++ )
+            for (int i = 0; i < predicates.Length; i++)
             {
                 var pred = predicates[i];
                 if (pred.Equals(False))
@@ -153,13 +154,13 @@ namespace Microsoft.Automata.Z3
 
         public BoolExpr MkSymmetricDifference(BoolExpr p1, BoolExpr p2)
         {
-            return context.MkOr(context.MkAnd(context.MkNot(p1),p2),context.MkAnd(p1,context.MkNot(p2)));
+            return context.MkOr(context.MkAnd(context.MkNot(p1), p2), context.MkAnd(p1, context.MkNot(p2)));
         }
 
         public bool CheckImplication(BoolExpr predicate1, BoolExpr predicate2)
-        { 
+        {
             solver.Push();
-            var psi = context.MkNot(context.MkImplies(predicate1, predicate2)); 
+            var psi = context.MkNot(context.MkImplies(predicate1, predicate2));
             solver.Assert(psi);
             var sat = solver.Check();
             solver.Pop();
@@ -287,6 +288,20 @@ namespace Microsoft.Automata.Z3
         public BoolExpr MkDiff(BoolExpr predicate1, BoolExpr predicate2)
         {
             return MkAnd(predicate1, MkNot(predicate2));
+        }
+
+        public BoolExpr ComputeInterpolant(BoolExpr predicate1, BoolExpr predicate2)
+        {
+            BoolExpr[] interpolantHolder = new BoolExpr[0];
+            Model _ = null;
+            context.ComputeInterpolant(
+                MkAnd(context.MkInterpolant(predicate1),
+                      context.MkInterpolant(predicate2)),
+                context.MkParams(),
+                out interpolantHolder,
+                out _);
+
+            return interpolantHolder[0];
         }
     }
 }

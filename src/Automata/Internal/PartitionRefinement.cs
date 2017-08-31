@@ -9,7 +9,7 @@ namespace Microsoft.Automata
     /// Sets are not required to be finite but the set type must be associated with a Boolean algebra.
     /// </summary>
     /// <typeparam name="S">set type</typeparam>
-    internal class SymbolicPartitionRefinement<S>
+    public class SymbolicPartitionRefinement<S>
     {
         PartTree partitions;
         IBooleanAlgebra<S> solver;

@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Microsoft.Automata
 {
-    internal class RegexToSMTConverter
+    public class RegexToSMTConverter
     {
         RegexToAutomatonConverter<BDD> automConverter;
         CharSetSolver css;

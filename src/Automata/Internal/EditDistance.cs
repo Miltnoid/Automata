@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Microsoft.Automata
 {
-    internal class EditDistance
+    public class EditDistance
     {
 
         /// <summary>

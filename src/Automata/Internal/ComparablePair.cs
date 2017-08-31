@@ -8,7 +8,7 @@ namespace Microsoft.Automata
     /// <summary>
     /// Pair of comparable elements
     /// </summary>
-    internal class ComparablePair<S, T> : Tuple<S, T>, IComparable where S : IComparable where T : IComparable
+    public class ComparablePair<S, T> : Tuple<S, T>, IComparable where S : IComparable where T : IComparable
     {
         public int CompareTo(object obj)
         {

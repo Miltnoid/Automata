@@ -9,7 +9,7 @@ namespace Microsoft.Automata.Utilities
     /// <summary>
     /// High precision timer
     /// </summary>
-    internal static class HighTimer
+    public static class HighTimer
     {
         [SuppressUnmanagedCodeSecurity]
         sealed class Win32

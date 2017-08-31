@@ -4497,7 +4497,7 @@ namespace Microsoft.Automata
         //    //internal bool IsEmpty
 
 
-        internal Dictionary<int, Block> GetStateEquivalenceClasses(bool makeTotal = true)
+        public Dictionary<int, Block> GetStateEquivalenceClasses(bool makeTotal = true)
         {
             IBooleanAlgebra<T> solver = algebra;
 
@@ -5430,7 +5430,7 @@ namespace Microsoft.Automata
         }
     }
 
-    internal class Block : IEnumerable<int>
+    public class Block : IEnumerable<int>
     {
         int representative = -1;
         bool reprChosen = false;

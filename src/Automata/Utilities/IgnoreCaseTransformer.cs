@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Automata.Utilities
 {
-    internal class IgnoreCaseTransformer
+    public class IgnoreCaseTransformer
     {
         BDD IgnoreCaseRel;
         BDD domain;

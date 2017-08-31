@@ -5,7 +5,7 @@ using Microsoft.Automata;
 
 namespace Microsoft.Automata
 {
-    internal class ThreeAutomaton<S> : IAutomaton<S> 
+    public class ThreeAutomaton<S> : IAutomaton<S> 
     {
         private Dictionary<int, List<Move<S>>> delta;
         private Dictionary<int, List<Move<S>>> deltaInv;
