@@ -17,8 +17,7 @@ namespace Automata.Tests
         internal static int NrOfStrings = 100;
         internal static int MaxStringLength = 100;
         internal static int Repetitions = 10;
-
-        [TestMethod]
+        
         public void gen_cpp_TestRegex2cpp() 
         {
             Regex Regex9 = new Regex(@"^(?i:www\.bing\.com)$", RegexOptions.Compiled | (RegexOptions.Singleline));
