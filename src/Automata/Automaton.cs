@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Automata;
 using Microsoft.Automata.Utilities;
 using Microsoft.Automata.BooleanAlgebras;
+using System.Linq;
 
 namespace Microsoft.Automata
 {
@@ -5402,6 +5403,28 @@ namespace Microsoft.Automata
             var compiler = new AutomataCSharpCompiler(this as Automaton<BDD>, classname, namespacename, true);
             var res = compiler.Compile();
             return res;
+        }
+
+        public Automaton<T> MapEdges(Func<T, T> edgeFunction)
+        {
+            return this.MapEdges<T>(this.Algebra, edgeFunction);
+        }
+
+        public Automaton<U> MapEdges<U>(IBooleanAlgebra<U> ba, Func<T,U> edgeFunction)
+        {
+            var edges = delta.Values
+                .SelectMany(ms => ms)
+                .Select(m =>
+                    Move<U>.Create(
+                        m.SourceState,
+                        m.TargetState,
+                        edgeFunction(m.Label)));
+            
+            return Automaton<U>.Create(
+                ba,
+                this.InitialState,
+                this.finalStateSet,
+                edges);
         }
     }
 

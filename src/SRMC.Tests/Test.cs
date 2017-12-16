@@ -18,6 +18,8 @@ namespace RMC.Tests
 
         public ArithExpr X { get { return (ArithExpr)this.x; } }
 
+        public ArithExpr Y { get { return (ArithExpr)this.y; } }
+
         public ArithExpr FreshIntVar()
         {
             return (ArithExpr)(context.MkFreshConst("z", context.IntSort));
@@ -44,7 +46,12 @@ namespace RMC.Tests
 
         public BoolExpr EqualsVal(int i)
         {
-            return context.MkEq(this.X, context.MkInt(i));
+            return this.EqualsVal(context.MkInt(i));
+        }
+
+        public BoolExpr EqualsVal(ArithExpr e)
+        {
+            return context.MkEq(this.X, e);
         }
     }
 
@@ -64,6 +71,23 @@ namespace RMC.Tests
             Assert.IsTrue(false, ba.ComputeInterpolant(eq2, isOdd).ToString());
 
             Assert.IsTrue(false);
+        }
+
+        [TestMethod]
+        //Testing Z3 Symbolic Application
+        public void SymbolicallyApplyTest()
+        {
+            var context = new InterpolationContext();
+            var ba = new ArithBoolAlg(context);
+
+            var eq2 = ba.EqualsVal(2);
+            var isOdd = ba.IsOdd();
+            var xEqYPlus2 = ba.EqualsVal(ba.Y + 2);
+
+            Console.WriteLine(isOdd.ToString());
+            Console.WriteLine(xEqYPlus2.ToString());
+
+            Assert.IsTrue(false, ba.SymbolicallyApply(xEqYPlus2,isOdd).ToString());
         }
     }
 }

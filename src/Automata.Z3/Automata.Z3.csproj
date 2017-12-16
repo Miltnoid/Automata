@@ -59,7 +59,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooleanAlgebraZ3.cs" />
-    <Compile Include="Interfaces\InterpolatingBooleanAlgebra.cs" />
+    <Compile Include="Interfaces\IBooleanAlgebraWithHoles.cs" />
+    <Compile Include="Interfaces\IInterpolatingAutomaton.cs" />
+    <Compile Include="Interfaces\IInterpolatingBooleanAlgebra.cs" />
+    <Compile Include="Interfaces\IInterpolatingBooleanAlgebraWithHoles.cs" />
     <Compile Include="Internal\DeclaredFuncDecls.cs" />
     <Compile Include="Internal\Escape.cs" />
     <Compile Include="Internal\LibraryProvider.cs" />
@@ -69,6 +72,7 @@
     <Compile Include="Partition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RankedAlphabet.cs" />
+    <Compile Include="TaggedBooleanAlgebra.cs" />
     <Compile Include="TreeRule.cs" />
     <Compile Include="TreeTheory.cs" />
     <Compile Include="TreeTransducer.cs" />

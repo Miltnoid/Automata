@@ -6,12 +6,13 @@ using Microsoft.Z3;
 
 namespace Microsoft.Automata.Z3
 {
-    public class Z3BoolAlg : IInterpolatingBooleanAlgebra<BoolExpr>
+    public class Z3BoolAlg : IInterpolatingBooleanAlgebra<BoolExpr>, IBooleanAlgebraWithHoles<BoolExpr,Expr>
     {
         InterpolationContext context;
         Solver solver;
         Sort elementSort;
         Expr elemVar;
+        Expr secondVar;
         MintermGenerator<BoolExpr> mtg;
         BoolExpr _False;
         BoolExpr _True;
@@ -24,6 +25,7 @@ namespace Microsoft.Automata.Z3
             this.elementSort = elementSort;
             this.solver = z3context.MkSolver();
             this.elemVar = z3context.MkConst("x", elementSort);
+            this.secondVar = z3context.MkConst("y", elementSort);
             this.mtg = new MintermGenerator<BoolExpr>(this);
             this._False = z3context.MkFalse();
             this._True = z3context.MkTrue();
@@ -36,6 +38,7 @@ namespace Microsoft.Automata.Z3
             this.elementSort = elementSort;
             this.solver = z3context.MkSolver();
             this.elemVar = z3context.MkConst("x", elementSort);
+            this.secondVar = z3context.MkConst("y", elementSort);
             this.mtg = new MintermGenerator<BoolExpr>(this);
             this._False = z3context.MkFalse();
             this._True = z3context.MkTrue();
@@ -49,12 +52,33 @@ namespace Microsoft.Automata.Z3
             get { return elemVar; }
         }
 
+        /// <summary>
+        /// y is the only allowed uninterpreted constant in Boolean expressions that are created within this Boolean Algebra.
+        /// </summary>
+        public Expr y
+        {
+            get { return secondVar; }
+        }
+
+        private Expr MkFreshIntVar()
+        {
+            return this.context.MkFreshConst("z", Context.IntSort);
+        }
+
+        private static BoolExpr SubstituteAndSimplify(
+            BoolExpr b,
+            Expr var,
+            Expr arg)
+        {
+            return (BoolExpr)b.Substitute(var, arg).Simplify();
+        }
+
         Context Context
         {
             get { return context; }
         }
 
-
+        #region IBooleanAlgebra Methods
         public IEnumerable<Tuple<bool[], BoolExpr>> GenerateMinterms(params BoolExpr[] constraints)
         {
             return mtg.GenerateMinterms(constraints);
@@ -289,7 +313,9 @@ namespace Microsoft.Automata.Z3
         {
             return MkAnd(predicate1, MkNot(predicate2));
         }
+        #endregion IBooleanAlgebra Methods
 
+        #region IInterpolatingBooleanAlgebra Methods
         public BoolExpr ComputeInterpolant(BoolExpr predicate1, BoolExpr predicate2)
         {
             BoolExpr[] interpolantHolder = new BoolExpr[0];
@@ -303,5 +329,56 @@ namespace Microsoft.Automata.Z3
 
             return interpolantHolder[0];
         }
+        #endregion IInterpolatingBooleanAlgebra Methods
+
+        #region IBooleanAlgebraWithHoles Methods
+        public Expr HoleOne
+        {
+            get
+            {
+                return this.x;
+            }
+        }
+
+        public Expr HoleTwo
+        {
+            get
+            {
+                return this.y;
+            }
+        }
+
+        public BoolExpr SymbolicallyApply(
+            BoolExpr twoHolePredicate,
+            BoolExpr singleHolePredicate)
+        {
+            var z = this.MkFreshIntVar();
+            var combinedPredicate = MkAnd(twoHolePredicate, singleHolePredicate);
+            var combinedPredicateZForX =
+                Z3BoolAlg.SubstituteAndSimplify(
+                    combinedPredicate,
+                    this.x,
+                    z);
+            var combinedPredicateZForXXForY =
+                Z3BoolAlg.SubstituteAndSimplify(
+                    combinedPredicateZForX,
+                    this.y,
+                    this.x);
+            Console.Write(combinedPredicateZForXXForY.ToString());
+            return
+                this.Context
+                    .MkExists(
+                        new Expr[] { z },
+                        combinedPredicateZForXXForY);
+        }
+
+        /*
+        public bool IsHoleOneOnly(BoolExpr predicate)
+        {
+            throw new NotImplementedException();
+            predicate.
+        }
+        */
+        #endregion IBooleanAlgebraWithHoles Methods
     }
 }
